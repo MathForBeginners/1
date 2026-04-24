@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rabat Bus | Math for All</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --accent: #ff0080;
+            --bg-light: #f8faff;
+            --text-dark: #2d3436;
+            --glass: rgba(255, 255, 255, 0.7);
+            --card-bg: #ffffff;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        [data-theme="dark"] {
+            --bg-light: #0f172a;
+            --text-dark: #f1f5f9;
+            --glass: rgba(15, 23, 42, 0.8);
+            --card-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* --- Preloader --- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .bus-loader {
+            font-size: 50px;
+            color: var(--primary);
+            animation: moveBus 2s infinite linear;
+        }
+
+        @keyframes moveBus {
+            0% { transform: translateX(-150px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(150px); opacity: 0; }
+        }
+
+        /* --- Header & Nav --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 0;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            padding: 0 5%;
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid var(--primary);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--primary); } }
+
+        .badges {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .badge {
+            background: rgba(0, 210, 255, 0.2);
+            border: 1px solid var(--primary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .exception-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-glow {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 35px rgba(0, 210, 255, 0.9);
+        }
+
+        /* --- Agencies Section --- */
+        .section-padding {
+            padding: 100px 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .agencies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .agency-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 210, 255, 0.1);
+        }
+
+        .agency-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .map-area {
+            height: 200px;
+            background: #e0e0e0;
+            position: relative;
+            background-image: url('https://www.google.com/maps/d/u/0/thumbnail?mid=1_K0i_eMvM8T8U8R9H7H9-R6Q6-o');
+            background-size: cover;
+        }
+
+        .marker {
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 0 rgba(255, 0, 128, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 128, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 0, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 128, 0); }
+        }
+
+        .agency-info {
+            padding: 25px;
+        }
+
+        .agency-info h3 { margin-bottom: 15px; color: var(--primary); }
+        .agency-info p { margin-bottom: 10px; font-size: 0.9rem; }
+        .agency-info i { color: var(--accent); margin-right: 10px; }
+
+        /* --- Timetable Section --- */
+        .timetable-container {
+            overflow-x: auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(0, 210, 255, 0.05);
+        }
+
+        /* --- Student Card Form --- */
+        .card-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            background: transparent;
+            color: var(--text-dark);
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--primary);
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone:hover {
+            background: rgba(0, 210, 255, 0.05);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--card-bg);
+            padding: 50px 5% 20px;
+            text-align: center;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .social-links {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .social-links a {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            transition: 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .nav-links { display: none; }
+            .hero-btns { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="bus-loader">
+            <i class="fas fa-bus"></i>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="top-bar">
+            <span><i class="fas fa-envelope"></i> mathforall@gmail.com</span>
+        </div>
+        <nav>
+            <div class="logo">Math for all</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#agencies">Agencies</a></li>
+                <li><a href="#timetable">Lines</a></li>
+                <li><a href="#student-card">Student Card</a></li>
+            </ul>
+            <div class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Home Hero Section -->
+    <section class="hero" id="home">
+        <div class="badges" data-aos="fade-down">
+            <span class="badge">Smart Students</span>
+            <span class="badge">All ages are welcome</span>
+        </div>
+        <h1 class="typewriter">Math for Beginners</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 20px;">Experience seamless mobility!</p>
+        <div class="exception-card" data-aos="zoom-in">
+            <p>You can have individual or group courses</p>
+        </div>
+        <div class="hero-btns">
+            <a href="#timetable" class="btn btn-glow">Plan Your Journey</a>
+            <button class="btn btn-glow" style="background: var(--accent); box-shadow: 0 0 20px rgba(255,0,128,0.4);">Choose Your Friends</button>
+            <button class="btn btn-glow" style="background: #fff; color: var(--primary);">Choose Your Teacher</button>
+        </div>
+    </section>
+
+    <!-- Agencies Section -->
+    <section class="section-padding" id="agencies">
+        <h2 class="section-title" data-aos="fade-up">Our Agencies</h2>
+        <div class="agencies-grid">
+            <!-- Rabat -->
+            <div class="agency-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="map-area">
+                    <div class="marker"></div>
+                </div>
+                <div class="agency-info">
+                    <h3>Rabat Agency</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Bab Chellah</p>
+                    <p><i class="fas fa-phone"></i> +212 537 61 82 33</p>
+                    <p><i class="fas fa-envelope"></i> agence.rabat@maths.ma</p>
+                </div>
+            </div>
+            <!-- Salé -->
+            <div class="agency-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="map-area">
+                    <div class="marker"></div>
+                </div>
+                <div class="agency-info">
+                    <h3>Salé Agency</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Centre Ville</p>
+                    <p><i class="fas fa-phone"></i> +212 537 74 85 16</p>
+                    <p><i class="fas fa-envelope"></i> agence.sale@maths.ma</p>
+                </div>
+            </div>
+            <!-- Temara -->
+            <div class="agency-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="map-area">
+                    <div class="marker"></div>
+                </div>
+                <div class="agency-info">
+                    <h3>Temara Agency</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Route N1 Hassan II</p>
+                    <p><i class="fas fa-phone"></i> +212 537 33 78 93</p>
+                    <p><i class="fas fa-envelope"></i> agence.temara@maths.ma</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timetable Section -->
+    <section class="section-padding" id="timetable" style="background: rgba(0, 210, 255, 0.03);">
+        <h2 class="section-title" data-aos="fade-up">Course Timetable</h2>
+        <div class="timetable-container" data-aos="fade-up">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Age Group</th>
+                        <th>Time (From - To)</th>
+                        <th>Price (Monthly)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MATH-BEG-01</strong></td>
+                        <td>6 - 10 Years</td>
+                        <td>09:00 - 11:00</td>
+                        <td>450 MAD</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MATH-INT-02</strong></td>
+                        <td>11 - 15 Years</td>
+                        <td>14:00 - 16:00</td>
+                        <td>600 MAD</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MATH-ADV-03</strong></td>
+                        <td>16+ Years</td>
+                        <td>17:00 - 19:00</td>
+                        <td>800 MAD</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MATH-GRP-04</strong></td>
+                        <td>Adults (Group)</td>
+                        <td>19:00 - 21:00</td>
+                        <td>1200 MAD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Student Card Section -->
+    <section class="section-padding" id="student-card">
+        <h2 class="section-title" data-aos="fade-up">Get Your Student Card</h2>
+        <div class="card-form" data-aos="zoom-in">
+            <form id="studentForm">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" placeholder="Enter your last name" required>
+                </div>
+                <div class="upload-zone" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary);"></i>
+                    <p>Drag & Drop ID Photo or Click to Upload</p>
+                    <input type="file" id="fileInput" hidden>
+                </div>
+                <button type="submit" class="btn btn-glow" style="width: 100%;">Submit Application</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="logo">Math for all</div>
+        <p>Providing smart mobility and education solutions for the future of Rabat.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+        </div>
+        <p>&copy; 2026 Rabat - Smart | All Rights Reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                setTimeout(() => { preloader.style.display = 'none'; }, 500);
+            }, 1500);
+        });
+
+        // Dark/Light Mode Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const icon = themeToggle.querySelector('i');
+
+        themeToggle.addEventListener('click', () => {
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                icon.className = 'fas fa-moon';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        });
+
+        // File Upload Animation
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--accent)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = 'var(--primary)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary)';
+            alert('File uploaded successfully!');
+        });
+
+        // Simple Form Submission
+        document.getElementById('studentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Application Submitted! We will contact you soon via email.');
+        });
+    </script>
+</body>
+</html>
